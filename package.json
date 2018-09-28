@@ -1,5 +1,5 @@
 {
-  "name": "@zboot/create",
+  "name": "create-esboot",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
@@ -9,7 +9,10 @@
     "dev": "rollup -cw",
     "minify": "uglifyjs --compress --mangle --toplevel --output dist/index.js -- dist/index.js"
   },
-  "author": "",
+  "bin": {
+    "create-esboot": "dist/index.js"
+  },
+  "author": "webpatch",
   "license": "ISC",
   "devDependencies": {
     "cli-spinner": "^0.2.8",

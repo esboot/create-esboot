@@ -9,6 +9,7 @@ export default {
     file: 'dist/index.js',
     format: 'cjs',
     strict: false,
+    banner: '#! /usr/bin/env node\n',
   },
   plugins: [
     resolve(),json(), typescript(), commonjs(),
