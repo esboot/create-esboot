@@ -1,4 +1,5 @@
-import fs from 'fs-extra';
+import fs from 'fs';
+import mkdirp from 'mkdirp';
 import path from 'path';
 import {fromBuffer} from 'yauzl';
 
@@ -29,7 +30,8 @@ function handleZipFile(projectName: string, resolve: any, reject: any) {
                 zipfile.readEntry();
             } else {
                 // ensure parent directory exists
-                fs.mkdirp(path.dirname(fileName), () => {
+                mkdirp(path.dirname(fileName), (err) => {
+                    if (err) console.error(err);
                     zipfile.openReadStream(entry, (errL: any, readStream: any) => {
                         if (errL) {
                             throw errL;

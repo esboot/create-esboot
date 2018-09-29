@@ -1,10 +1,11 @@
 import path from 'path';
-import fs from 'fs-extra';
+import fs from 'fs';
 import * as tc from 'colorette';
 import {Spinner} from 'cli-spinner';
 import Builder from './builder';
 import {downloadStarter} from './download';
 import {unZipBuffer} from "./unzip";
+import {setTmpDirectory} from "./utils";
 
 function isLocalPath(templatePath) {
     return /^[./]|(^[a-zA-Z]:)/.test(templatePath)
@@ -16,10 +17,8 @@ function hasSlash(s) {
 
 export async function start(argv) {
     let {template, destPath} = argv;
-    if (isLocalPath(template)) {
-        if (fs.pathExistsSync(template)) {
-            new Builder(template, argv);
-        }
+    if (isLocalPath(template) && fs.existsSync(template)) {
+        await (new Builder(template, argv)).start()
     } else {
         template = hasSlash(template) ? template : `webpatch/${template}`;
 
@@ -30,15 +29,15 @@ export async function start(argv) {
         loading.start();
 
         const repoRoot = path.resolve(__dirname, localRepoPath);
-        fs.removeSync(repoRoot);
+        setTmpDirectory(repoRoot);
 
         try {
             const buffer = await downloadStarter(template);
-            await unZipBuffer(buffer, repoRoot);
-        } catch (e) {
-            console.log('Download error!');
-        } finally {
             loading.stop(true);
+            await unZipBuffer(buffer, repoRoot);
+            await (new Builder(repoRoot, argv)).start()
+        } catch (e) {
+           // console.error(`\n${tc.red('✖')} ${e.message}\n`);
         }
     }
 }

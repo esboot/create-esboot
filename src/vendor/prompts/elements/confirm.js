@@ -7,14 +7,14 @@ import { erase, cursor } from 'sisteransi';
  * ConfirmPrompt Base Element
  * @param {Object} opts Options
  * @param {String} opts.message Message
- * @param {Boolean} [opts.initial] Default value (true/false)
+ * @param {Boolean} [opts.default] Default value (true/false)
  */
 export class ConfirmPrompt extends Prompt {
   constructor(opts={}) {
     super(opts);
     this.msg = opts.message;
-    this.value = opts.initial;
-    this.initialValue = !!opts.initial;
+    this.value = opts.default;
+    this.initialValue = !!opts.default;
     this.render(true);
   }
 

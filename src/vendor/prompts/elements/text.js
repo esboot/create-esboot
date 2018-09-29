@@ -8,7 +8,7 @@ import { style, clear } from '../util';
  * @param {Object} opts Options
  * @param {String} opts.message Message
  * @param {String} [opts.style='default'] Render style
- * @param {String} [opts.initial] Default value
+ * @param {String} [opts.default] Default value
  */
 export class TextPrompt extends Prompt {
   constructor(opts={}) {
@@ -16,17 +16,17 @@ export class TextPrompt extends Prompt {
     this.transform = style.render(opts.style);
     this.scale = this.transform.scale;
     this.msg = opts.message;
-    this.initial = opts.initial || '';
+    this.default = opts.default || '';
     this.value = '';
-    this.cursor = Number(!!this.initial);
+    this.cursor = Number(!!this.default);
     this.clear = clear('');
     this.render();
   }
 
   set value(v) {
-    if (!v && this.initial) {
+    if (!v && this.default) {
       this.placeholder = true;
-      this.rendered = color.gray(this.transform.render(this.initial));
+      this.rendered = color.gray(this.transform.render(this.default));
     } else {
       this.placeholder = false;
       this.rendered = this.transform.render(v);
@@ -46,7 +46,7 @@ export class TextPrompt extends Prompt {
   }
 
   abort() {
-    this.value = this.value || this.initial;
+    this.value = this.value || this.default;
     this.done = this.aborted = true;
     this.fire();
     this.render();
@@ -55,7 +55,7 @@ export class TextPrompt extends Prompt {
   }
 
   submit() {
-    this.value = this.value || this.initial;
+    this.value = this.value || this.default;
     this.done = true;
     this.aborted = false;
     this.fire();
@@ -66,7 +66,7 @@ export class TextPrompt extends Prompt {
 
   next() {
     if (!this.placeholder) return this.bell();
-    this.value = this.initial;
+    this.value = this.default;
     this.cursor = this.rendered.length;
     this.fire();
     this.render();
@@ -127,7 +127,7 @@ export class TextPrompt extends Prompt {
 
     this.out.write(this.clear + prompt);
     this.out.write(cursor.move(this.placeholder ?
-      -this.initial.length*this.scale :
+      -this.default.length*this.scale :
       -this.rendered.length + this.cursor*this.scale
     ));
 

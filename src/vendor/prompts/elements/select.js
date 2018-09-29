@@ -12,14 +12,14 @@ import { erase, cursor } from 'sisteransi';
  * @param {String} opts.message Message
  * @param {Array} opts.choices Array of choice objects
  * @param {String} [opts.hint] Hint to display
- * @param {Number} [opts.initial] Index of default value
+ * @param {Number} [opts.default] Index of default value
  */
 export class SelectPrompt extends Prompt {
   constructor(opts={}) {
     super(opts);
     this.msg = opts.message;
     this.hint = opts.hint || '- Use arrow-keys. Return to submit.';
-    this.cursor = opts.initial || 0;
+    this.cursor = opts.default || 0;
     this.values = opts.choices || [];
     this.value = opts.choices[this.cursor].value;
     this.clear = clear('');

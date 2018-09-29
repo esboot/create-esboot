@@ -16,7 +16,7 @@ function toPrompt(type, args, opts={}) {
 /**
  * Text prompt
  * @param {string} args.message Prompt message to display
- * @param {string} [args.initial] Default string value
+ * @param {string} [args.default] Default string value
  * @param {string} [args.style="default"] Render style ('default', 'password', 'invisible')
  * @param {function} [args.onState] On state change callback
  * @returns {Promise} Promise with user input
@@ -28,7 +28,7 @@ export function text(args) {
 /**
  * Classic yes/no prompt
  * @param {string} args.message Prompt message to display
- * @param {boolean} [args.initial=false] Default value
+ * @param {boolean} [args.default=false] Default value
  * @param {function} [args.onState] On state change callback
  * @returns {Promise} Promise with user input
  */
@@ -40,7 +40,7 @@ export function confirm(args) {
  * Interactive select prompt
  * @param {string} args.message Prompt message to display
  * @param {Array} args.choices Array of choices objects `[{ title, value }, ...]`
- * @param {number} [args.initial] Index of default value
+ * @param {number} [args.default] Index of default value
  * @param {String} [args.hint] Hint to display
  * @param {function} [args.onState] On state change callback
  * @returns {Promise} Promise with user input

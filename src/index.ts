@@ -1,8 +1,9 @@
 import * as tc from 'colorette';
 import path from 'path';
-import fs from 'fs-extra';
+import fs from 'fs';
 import confirm from './confirm';
 import {start} from './start'
+import {cleanup} from "./utils";
 
 const USAGE_DOCS = `Usage:
 npm init @zboot [starter] [project-name]
@@ -45,15 +46,14 @@ async function run() {
         }
         try {
             await confirm(msg, msg === '');
-            console.log('start', template, destPath);
             await start({template, destPath})
         } catch (e) {
-            console.log('catch');
+            // console.error(`\n${tc.red('✖')} ${e.message}\n`);
         }
     } catch (e) {
-        console.error(`\n${tc.red('✖')} ${e.message}\n`);
+        // console.error(`\n${tc.red('✖')} ${e.message}\n`);
     }
-    // cleanup();
+    cleanup();
 }
 
 run();
