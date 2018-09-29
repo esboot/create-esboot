@@ -10,7 +10,7 @@ npm init esboot [starter] [project-name]
 
 Options:
   -h  Show help
-  -i  Show version
+  -v  Show version
 `;
 
 function getPkgVersion() {
@@ -22,7 +22,7 @@ async function run() {
     let args = process.argv.slice(2);
 
     const help = args.indexOf('--help') >= 0 || args.indexOf('-h') >= 0;
-    const info = args.indexOf('--info') >= 0 || args.indexOf('-i') >= 0;
+    const info = args.indexOf('--version') >= 0 || args.indexOf('-v') >= 0;
 
     args = args.filter(a => a[0] !== '-');
 
