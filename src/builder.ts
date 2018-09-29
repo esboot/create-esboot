@@ -27,16 +27,20 @@ export default class Builder {
     }
 
     async start() {
-        const answer = await prompt(this.meta.prompt);
-        const appName = path.basename(this.destPath() === "." ? process.cwd() : this.destPath());
-        this.props = Object.assign({}, answer, {appName});
-        ensureDirSync(this.destPath());
-        this.writing();
         try {
+            const answer = await prompt(this.meta.prompt, {
+                onCancel: function () {
+                    throw new Error('abort');
+                }
+            });
+            const appName = path.basename(this.destPath() === "." ? process.cwd() : this.destPath());
+            this.props = Object.assign({}, answer, {appName});
+            ensureDirSync(this.destPath());
+            this.writing();
             await confirm('Install all dependence right now?');
             await this.install();
         } catch (e) {
-
+            // console.log(e);
         }
     }
 

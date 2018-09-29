@@ -10,7 +10,7 @@ import { erase, cursor } from 'sisteransi';
  * @param {Boolean} [opts.default] Default value (true/false)
  */
 export class ConfirmPrompt extends Prompt {
-  constructor(opts={}) {
+  constructor(opts = {}) {
     super(opts);
     this.msg = opts.message;
     this.value = opts.default;
@@ -55,21 +55,23 @@ export class ConfirmPrompt extends Prompt {
   }
 
   render(first) {
+    // console.log('done', this.done, 'abort', this.aborted, 'value', this.value);
     if (first) this.out.write(cursor.hide);
-    if(this.done && this.value) {
-      this.out.write(erase.line);
+    if (this.aborted) return this.out.write('');
+    if (this.done && this.value) {
+      this.out.write(` ${color.bold(color.cyan(this.value ? 'Yes' : 'No'))}`);
     } else {
       this.out.write(
         erase.line +
-          cursor.to(0) +
-          [
-            style.symbol(this.done, this.aborted),
-            color.bold(this.msg),
-            style.delimiter(false),
-            this.done
-              ? color.green(this.value ? 'yes' : 'no')
-              : color.gray(this.initialValue ? '(Y/n)' : '(y/N)')
-          ].join(' ')
+        cursor.to(0) +
+        [
+          style.symbol(this.done, this.aborted),
+          color.bold(this.msg),
+          style.delimiter(false),
+          this.done
+            ? color.green(this.value ? 'yes' : 'no')
+            : color.gray(this.initialValue ? '(Y/n)' : '(y/N)')
+        ].join(' ')
       );
     }
   }

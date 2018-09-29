@@ -6,7 +6,11 @@ import {start} from './start'
 import {cleanup} from "./utils";
 
 const USAGE_DOCS = `Usage:
-npm init @zboot [starter] [project-name]
+npm init esboot [starter] [project-name]
+
+Options:
+  -h  Show help
+  -i  Show version
 `;
 
 function getPkgVersion() {
@@ -14,18 +18,16 @@ function getPkgVersion() {
     return pkg.version;
 }
 
-
 async function run() {
     let args = process.argv.slice(2);
 
-    const autoRun = args.indexOf('--run') >= 0;
     const help = args.indexOf('--help') >= 0 || args.indexOf('-h') >= 0;
-    const info = args.indexOf('--info') >= 0;
+    const info = args.indexOf('--info') >= 0 || args.indexOf('-i') >= 0;
 
     args = args.filter(a => a[0] !== '-');
 
     if (info) {
-        console.log('zboot:', getPkgVersion(), '\n');
+        console.log(`esboot v${getPkgVersion()} \n`);
         return 0;
     }
 
@@ -34,24 +36,22 @@ async function run() {
         return 0;
     }
 
+    const currDir = process.cwd();
+    const [template = 'react', dir = '.'] = args;
+    const destPath = path.join(currDir, dir);
+    let msg = '';
+    if (currDir === destPath) {
+        msg = 'Create project under current directory?';
+    } else if (fs.existsSync(destPath)) {
+        msg = 'Target directory exists. Overwrite?'
+    }
     try {
-        const currDir = process.cwd();
-        const [template, dir = '.'] = args;
-        const destPath = path.join(currDir, dir);
-        let msg = '';
-        if (currDir === destPath) {
-            msg = 'Create project under current directory?';
-        } else if (fs.existsSync(destPath)) {
-            msg = 'Target directory exists. Continue?'
-        }
-        try {
-            await confirm(msg, msg === '');
-            await start({template, destPath})
-        } catch (e) {
-            // console.error(`\n${tc.red('✖')} ${e.message}\n`);
-        }
+        await confirm(msg, false, msg === '');
+        await start({template, destPath})
     } catch (e) {
-        // console.error(`\n${tc.red('✖')} ${e.message}\n`);
+        if (e && e.hasOwnProperty('message')) {
+            console.error(tc.red(`Error ${e.message}`));
+        }
     }
     cleanup();
 }

@@ -1,6 +1,6 @@
 {
   "name": "create-esboot",
-  "version": "1.0.1-beta.3",
+  "version": "1.0.1-beta.4",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -16,10 +16,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/ejs": "^2.6.0",
-    "@types/fs-extra": "^5.0.4",
     "cli-spinner": "^0.2.8",
     "colorette": "^1.0.4",
-    "cross-spawn": "^6.0.5",
     "ejs": "^2.6.1",
     "minimatch": "^3.0.4",
     "mkdirp": "^0.5.1",
@@ -31,12 +29,7 @@
     "sisteransi": "^1.0.0",
     "typescript": "^3.1.1",
     "uglify-es": "^3.3.9",
-    "yauzl": "^2.10.0"
-  },
-  "dependencies": {
-    "inquirer": "^6.2.0",
-    "micromatch": "^3.1.10",
-    "ncp": "^2.0.0",
-    "prompt": "^1.0.0"
+    "yauzl": "^2.10.0",
+    "ncp": "^2.0.0"
   }
 }

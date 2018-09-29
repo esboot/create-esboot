@@ -20,24 +20,30 @@ export async function start(argv) {
     if (isLocalPath(template) && fs.existsSync(template)) {
         await (new Builder(template, argv)).start()
     } else {
-        template = hasSlash(template) ? template : `webpatch/${template}`;
+        template = hasSlash(template) ? template : `esboot/${template}-template`;
 
-        const localRepoPath = path.join(destPath, '.boot-templates', template.replace(/\//g, '-'));
+        const rootPath = path.join(destPath, '.boot-templates');
+        const localRepoPath = path.resolve(rootPath, template.replace(/\//g, '-'));
 
-        const loading = new Spinner(tc.bold('downloading starter'));
+        const loading = new Spinner({
+            onTick: function (msg) {
+                this.clearLine(this.stream);
+                this.stream.write(`${tc.cyan(msg)}downloading starter`)
+            }
+        });
         loading.setSpinnerString(18);
         loading.start();
 
-        const repoRoot = path.resolve(__dirname, localRepoPath);
-        setTmpDirectory(repoRoot);
+        setTmpDirectory(rootPath);
 
         try {
             const buffer = await downloadStarter(template);
             loading.stop(true);
-            await unZipBuffer(buffer, repoRoot);
-            await (new Builder(repoRoot, argv)).start()
+            await unZipBuffer(buffer, localRepoPath);
+            await (new Builder(localRepoPath, argv)).start()
         } catch (e) {
-           // console.error(`\n${tc.red('✖')} ${e.message}\n`);
+            loading.stop(true);
+            console.error(`\n${tc.red('✖')} ${e.message}\n`);
         }
     }
 }
