@@ -3,8 +3,7 @@ import fs from 'fs';
 import chalk from 'colorette';
 import minimatch from 'minimatch';
 import {render} from 'ejs';
-import {prompt} from './vendor/prompts'
-import confirm from './confirm'
+import {prompt} from './vendor/prompts';
 import {copy, ensureDirSync, installDependences, walk} from "./utils";
 
 const templateExt = '.ejs';
@@ -28,7 +27,16 @@ export default class Builder {
 
     async start() {
         try {
-            const answer = await prompt(this.meta.prompt, {
+            const o = [
+                ...this.meta.prompt,
+                {
+                    name: 'install',
+                    type: 'confirm',
+                    message: 'Install all dependence right now?',
+                    default: false
+                }
+            ];
+            const answer = await prompt(o, {
                 onCancel: function () {
                     throw new Error('abort');
                 }
@@ -37,8 +45,7 @@ export default class Builder {
             this.props = Object.assign({}, answer, {appName});
             ensureDirSync(this.destPath());
             this.writing();
-            await confirm('Install all dependence right now?');
-            await this.install();
+            if (answer.install) await this.install();
         } catch (e) {
             // console.log(e);
         }
@@ -111,9 +118,9 @@ export default class Builder {
                 }
             }
 
-            console.log(`\n${chalk.green('[success]')} All files created!`);
+            console.log(`${chalk.green('[success]')} All files created!`);
         } catch (e) {
-            console.error(`\n${chalk.red('[error]')} ${e.message}`);
+            console.error(`${chalk.red('[error]')} ${e.message}`);
         }
     }
 

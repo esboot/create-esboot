@@ -40,7 +40,8 @@ export async function start(argv) {
             const buffer = await downloadStarter(template);
             loading.stop(true);
             await unZipBuffer(buffer, localRepoPath);
-            await (new Builder(localRepoPath, argv)).start()
+            const b = new Builder(localRepoPath, argv);
+            await b.start();
         } catch (e) {
             loading.stop(true);
             console.error(`\n${tc.red('✖')} ${e.message}\n`);

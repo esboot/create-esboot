@@ -1,9 +1,10 @@
 import * as tc from 'colorette';
 import path from 'path';
 import fs from 'fs';
-import confirm from './confirm';
+// import confirm from './confirm';
 import {start} from './start'
 import {cleanup} from "./utils";
+import {confirm} from './vendor/prompts/prompts'
 
 const USAGE_DOCS = `Usage:
 npm init esboot [starter] [project-name]
@@ -46,12 +47,10 @@ async function run() {
         msg = 'Target directory exists. Overwrite?'
     }
     try {
-        await confirm(msg, false, msg === '');
-        await start({template, destPath})
+        const p = msg === '' ? true : await confirm({message: msg, default: false});
+        if (p) await start({template, destPath})
     } catch (e) {
-        if (e && e.hasOwnProperty('message')) {
-            console.error(tc.red(`Error ${e.message}`));
-        }
+        if (e && e.hasOwnProperty('message')) console.error(tc.red(`Error ${e.message}`));
     }
     cleanup();
 }

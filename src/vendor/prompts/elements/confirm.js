@@ -55,24 +55,18 @@ export class ConfirmPrompt extends Prompt {
   }
 
   render(first) {
-    // console.log('done', this.done, 'abort', this.aborted, 'value', this.value);
     if (first) this.out.write(cursor.hide);
-    if (this.aborted) return this.out.write('');
-    if (this.done && this.value) {
-      this.out.write(` ${color.bold(color.cyan(this.value ? 'Yes' : 'No'))}`);
-    } else {
-      this.out.write(
-        erase.line +
-        cursor.to(0) +
-        [
-          style.symbol(this.done, this.aborted),
-          color.bold(this.msg),
-          style.delimiter(false),
-          this.done
-            ? color.green(this.value ? 'yes' : 'no')
-            : color.gray(this.initialValue ? '(Y/n)' : '(y/N)')
-        ].join(' ')
-      );
-    }
+    this.out.write(
+      erase.line +
+      cursor.to(0) +
+      [
+        style.symbol(this.done, this.aborted),
+        color.bold(this.msg),
+        style.delimiter(false),
+        this.aborted ? '' : this.done
+          ? color.green(this.value ? 'yes' : 'no')
+          : color.gray(this.initialValue ? '(Y/n)' : '(y/N)')
+      ].join(' ')
+    );
   }
 }
