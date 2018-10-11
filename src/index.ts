@@ -1,7 +1,6 @@
 import * as tc from 'colorette';
 import path from 'path';
 import fs from 'fs';
-// import confirm from './confirm';
 import {start} from './start'
 import {cleanup} from "./utils";
 import {confirm} from './vendor/prompts/prompts'
@@ -40,14 +39,14 @@ async function run() {
     const currDir = process.cwd();
     const [template = 'react', dir = '.'] = args;
     const destPath = path.join(currDir, dir);
-    let msg = '';
+    let msg;
     if (currDir === destPath) {
         msg = 'Create project under current directory?';
     } else if (fs.existsSync(destPath)) {
         msg = 'Target directory exists. Overwrite?'
     }
     try {
-        const p = msg === '' ? true : await confirm({message: msg, default: false});
+        const p = !msg ? true : await confirm({message: msg, default: false});
         if (p) await start({template, destPath})
     } catch (e) {
         if (e && e.hasOwnProperty('message')) console.error(tc.red(`Error ${e.message}`));

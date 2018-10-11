@@ -4,7 +4,7 @@ import chalk from 'colorette';
 import minimatch from 'minimatch';
 import {render} from 'ejs';
 import {prompt} from './vendor/prompts';
-import {copy, ensureDirSync, installDependences, walk} from "./utils";
+import {cmdExist, copy, ensureDirSync, installDependences, walk} from "./utils";
 
 const templateExt = '.ejs';
 
@@ -38,14 +38,28 @@ export default class Builder {
             ];
             const answer = await prompt(o, {
                 onCancel: function () {
-                    throw new Error('abort');
+                    // throw new Error('abort');
                 }
             });
             const appName = path.basename(this.destPath() === "." ? process.cwd() : this.destPath());
-            this.props = Object.assign({}, answer, {appName});
+            const p = path.relative(process.cwd(), this.destPath());
+            const haveYarn = await cmdExist('yarn');
+            const cmd = haveYarn ? 'yarn' : 'npm';
+            this.props = Object.assign({}, answer, {appName}, {destPath: p}, {cmd});
             ensureDirSync(this.destPath());
             this.writing();
-            if (answer.install) await this.install();
+
+            if (answer.install) {
+                const haveInstall = await this.install();
+                if (haveInstall) {
+                    console.log(render(this.meta.completeMessage, this.props));
+                } else {
+                    console.log(`\n\n${chalk.red('✖ Abort!')}\n`);
+                    console.log(render(this.meta.incompleteMessage, this.props));
+                }
+            } else {
+                console.log(render(this.meta.incompleteMessage, this.props));
+            }
         } catch (e) {
             // console.log(e);
         }
@@ -67,7 +81,7 @@ export default class Builder {
         });
     };
 
-    // copy file ,denpend on file extension
+    // copy file, depend on file extension
     copyFile(filePath) {
         filePath.endsWith(templateExt) ? this.copyTpl(this.props, filePath) : this.copy(filePath);
     }
@@ -80,7 +94,7 @@ export default class Builder {
                 return pre;
             }, {});
         }
-        return Object.assign({}, ignoreMap, this.meta.filter);
+        return Object.assign({}, ignoreMap, this.meta.filter, {'node_modules/': ''});
     }
 
     writing() {
@@ -118,14 +132,14 @@ export default class Builder {
                 }
             }
 
-            console.log(`${chalk.green('[success]')} All files created!`);
+            console.log(chalk.green(`Success! All files created!`));
         } catch (e) {
-            console.error(`${chalk.red('[error]')} ${e.message}`);
+            console.error(chalk.red(`Error! ${e.message}`));
         }
     }
 
     async install() {
-        await installDependences(this.argv.destPath);
+        return await installDependences(this.argv.destPath);
     }
 
 }

@@ -41,13 +41,13 @@ export function cmdExist(executor: string) {
             shell: true,
         });
         p.stdout.once('data', (data) => {
-            resolve();
+            resolve(true);
         });
         p.stderr.once('data', (data) => {
-            reject();
+            resolve(false);
         });
         p.once('close', (code) => {
-            code === 0 ? resolve() : reject();
+            code === 0 ? resolve(true) : resolve(false);
         });
     })
 }
@@ -55,11 +55,11 @@ export function cmdExist(executor: string) {
 export async function installDependences(cwd) {
     try {
         await cmdExist('yarn');
-        await cmd('yarn', 'install', cwd);
+        return await cmd('yarn', 'install', cwd);
     } catch (e) {
         try {
             await cmdExist('npm');
-            await cmd('npm', 'install', cwd);
+            return await cmd('npm', 'install', cwd);
         } catch (e) {
             console.error(e.message)
         }
@@ -72,8 +72,12 @@ export function cmd(executor: string, command: string, projectPath: string) {
             stdio: 'inherit',
             cwd: projectPath
         });
-        p.once('exit', () => resolve());
-        p.once('error', reject);
+        p.once('exit', (code, signal) => {
+            resolve(code == 0)
+        });
+        p.once('error', () => {
+            reject(false)
+        });
         childrenProcesses.push(p);
     });
 }
