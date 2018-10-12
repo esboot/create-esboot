@@ -1,8 +1,8 @@
 import * as tc from 'colorette';
 import path from 'path';
 import fs from 'fs';
-import {start} from './start'
-import {cleanup} from "./utils";
+import {start} from './lib/start'
+import {cleanup} from "./lib/utils";
 import {confirm} from './vendor/prompts/prompts'
 
 const USAGE_DOCS = `Usage:
