@@ -57,7 +57,7 @@ export default class Builder {
     };
 
     copyTpl(from, to, opts) {
-        renderFile(from, opts, (err, rs) => {
+        renderFile(from, opts, {filename: from}, (err, rs) => {
             if (err) throw err;
             const destFile = to.replace(templateExt, '');
             fs.writeFileSync(destFile, rs, 'utf8');
