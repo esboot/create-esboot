@@ -1,4 +1,5 @@
-import {ChildProcess, spawn, execSync} from 'child_process';
+import {ChildProcess, execSync} from 'child_process';
+import spawn from 'cross-spawn';
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
