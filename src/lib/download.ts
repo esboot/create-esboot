@@ -1,7 +1,7 @@
 import { getUserConfigField } from './utils';
 
 export async function downloadStarter(starter) {
-    let downloadUrl = 'https://github.com/{template-name}/archive/master.zip';
+    let downloadUrl = 'https://github.com/{}/archive/master.zip';
 
     try {
         const userMirror = await getUserConfigField('esboot_tpl_mirror');
@@ -10,9 +10,9 @@ export async function downloadStarter(starter) {
         console.log(err);
     }
 
-	const url = downloadUrl.replace('{template-name}', starter);
+	  const url = downloadUrl.replace('{}', starter);
 
-	console.log(` ===> Downloading template from ${url}`);
+	  console.log(` ===> Downloading template from ${url}`);
     return downloadFromURL(url);
 }
 
