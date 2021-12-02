@@ -1,23 +1,41 @@
-import {get} from 'https';
+import { getNpmConfigField } from './utils';
 
-export function downloadStarter(starter) {
-    return downloadFromURL(`https://github.com/${starter}/archive/master.zip`);
+function downloadFromURL(url: string, isHttps: boolean): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+		const request = isHttps ? require('https') : require('http');
+
+    request.get(url, (res) => {
+      // console.log(res, '<-- res');
+      if (res.statusCode === 302) {
+				console.log(` ===> Redirect to ${res.headers.location}`);
+
+        downloadFromURL(res.headers.location!, isHttps).then(resolve, reject);
+      } else {
+        const data: any[] = [];
+
+        res.on('data', (chunk) => data.push(chunk));
+
+        res.on('end', () => {
+					if (res.statusCode === 404) {
+						reject({ message: '404: Page not found' })
+					}
+          resolve(Buffer.concat(data));
+        });
+
+        res.on('error', (error) => {
+					console.log(error, '<-- error');
+					reject();
+				});
+      }
+    });
+  });
 }
 
-function downloadFromURL(url: string): Promise<Buffer> {
-    return new Promise((resolve, reject) => {
-        get(url, (res) => {
-            if (res.statusCode === 302) {
-                downloadFromURL(res.headers.location!).then(resolve, reject);
-            } else {
-                const data: any[] = [];
+export function downloadStarter(starter) {
+	const userMirror = getNpmConfigField('esboot_tpl_mirror');
+	const mirror = userMirror === 'undefined' ? 'https://github.com/{template-name}/archive/master.zip' : userMirror;
+	const url = mirror.replace('{template-name}', starter);
 
-                res.on('data', chunk => data.push(chunk));
-                res.on('end', () => {
-                    resolve(Buffer.concat(data));
-                });
-                res.on('error', reject);
-            }
-        });
-    });
+	console.log(` ===> Downloading url is ${url}`);
+  return downloadFromURL(url, url.indexOf('https:') !== -1);
 }

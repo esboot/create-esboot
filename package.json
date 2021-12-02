@@ -1,6 +1,6 @@
 {
   "name": "create-esboot",
-  "version": "1.0.1-beta.13",
+  "version": "1.0.1-beta.14",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -9,6 +9,9 @@
     "dev": "rollup -cw",
     "minify": "uglifyjs --compress --mangle --toplevel --output dist/index.js -- dist/index.js"
   },
+  "files": [
+    "dist"
+  ],
   "bin": {
     "create-esboot": "dist/index.js"
   },
