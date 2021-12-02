@@ -1,6 +1,6 @@
 {
   "name": "create-esboot",
-  "version": "1.0.1-beta.13",
+  "version": "1.0.1-beta.14",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -12,6 +12,7 @@
   "bin": {
     "create-esboot": "dist/index.js"
   },
+  "files": ["dist"],
   "author": "webpatch",
   "license": "ISC",
   "devDependencies": {

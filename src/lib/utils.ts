@@ -1,4 +1,4 @@
-import {ChildProcess, spawn} from 'child_process';
+import {ChildProcess, spawn, execSync} from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
@@ -126,3 +126,24 @@ export function copy(from, to) {
         });
     })
 }
+
+async function getPackageManageClient() {
+    try {
+        await cmdExist('yarn');
+        return 'yarn';
+    } catch (e) {
+        return 'npm'
+    }
+}
+
+export async function getUserConfigField(field: string): Promise<string> {
+    const packageManageClient = await getPackageManageClient();
+
+    return execSync(`${packageManageClient} config get ${field}`, {
+        stdio: ['ignore', 'pipe', 'pipe'],
+      })
+        .toString()
+        .replace(/\n$/, '');
+
+}
+

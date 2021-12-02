@@ -1,6 +1,6 @@
 import path from 'path';
 import fs from 'fs';
-import chalk from 'colorette';
+import * as chalk from 'colorette';
 import minimatch from 'minimatch';
 import {renderFile, render} from 'ejs';
 import {prompt} from '../vendor/prompts/index';
