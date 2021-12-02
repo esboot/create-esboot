@@ -127,11 +127,23 @@ export function copy(from, to) {
     })
 }
 
-export function getNpmConfigField(field: string): string {
-    return execSync(`npm config get ${field}`, {
-      stdio: ['ignore', 'pipe', 'pipe'],
-    })
-      .toString()
-      .replace(/\n$/, '');
+async function getPackageManageClient() {
+    try {
+        await cmdExist('yarn');
+        return 'yarn';
+    } catch (e) {
+        return 'npm'
+    }
 }
-  
+
+export async function getUserConfigField(field: string): Promise<string> {
+    const packageManageClient = await getPackageManageClient();
+
+    return execSync(`${packageManageClient} config get ${field}`, {
+        stdio: ['ignore', 'pipe', 'pipe'],
+      })
+        .toString()
+        .replace(/\n$/, '');
+
+}
+
