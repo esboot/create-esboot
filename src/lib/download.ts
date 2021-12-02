@@ -10,9 +10,8 @@ export async function downloadStarter(starter) {
         console.log(err);
     }
 
-	  const url = downloadUrl.replace('{}', starter);
-
-	  console.log(` ===> Downloading template from ${url}`);
+	const url = downloadUrl.replace('{}', starter);
+  
     return downloadFromURL(url);
 }
 
@@ -23,7 +22,7 @@ function downloadFromURL(url: string): Promise<Buffer> {
 
         request.get(url, (res) => {
             if (res.statusCode === 302) {
-                console.log(` ===> Redirect to ${res.headers.location}`);
+                // console.log(`Redirect to ${res.headers.location}`);
 
                 downloadFromURL(res.headers.location!).then(resolve, reject);
             } else {
@@ -32,12 +31,15 @@ function downloadFromURL(url: string): Promise<Buffer> {
                 res.on('data', chunk => data.push(chunk));
                 res.on('end', () => {
                     if (res.statusCode === 404) {
-						reject({ message: '404: Page not found' })
+						reject({ message: `404: ${url} not found` })
 					}
 
                     resolve(Buffer.concat(data));
                 });
-                res.on('error', reject);
+                res.on('error', (e) => reject({ message: `
+                An error occurred when Downloading template from ${url}
+                Error: ${e.message}
+                `}));
             }
         });
     });
