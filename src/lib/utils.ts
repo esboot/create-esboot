@@ -1,4 +1,4 @@
-import {ChildProcess, spawn} from 'child_process';
+import {ChildProcess, spawn, execSync} from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import mkdirp from 'mkdirp';
@@ -126,3 +126,12 @@ export function copy(from, to) {
         });
     })
 }
+
+export function getNpmConfigField(field: string): string {
+    return execSync(`npm config get ${field}`, {
+      stdio: ['ignore', 'pipe', 'pipe'],
+    })
+      .toString()
+      .replace(/\n$/, '');
+}
+  
